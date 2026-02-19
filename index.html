@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Hub | Pro</title>
-	<link rel="icon" type="image/png" href="sitelogo1.png">
+    <title>System Hub | AI Command Center</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,54 +39,54 @@
             transition: background 0.5s ease;
         }
 
-	/* --- TOAST NOTIFICATIONS --- */
-#toast-container {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    pointer-events: none;
-}
+        /* --- TOAST NOTIFICATIONS --- */
+        #toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
 
-.toast {
-    background: rgba(10, 10, 15, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    padding: 14px 20px;
-    border-radius: 16px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
-    transform: translateX(120%);
-    opacity: 0;
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
+        .toast {
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
-.toast.show {
-    transform: translateX(0);
-    opacity: 1;
-}
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
 
-.toast-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    font-size: 14px;
-}
-.toast-success .toast-icon { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-.toast-error .toast-icon { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-.toast-info .toast-icon { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
+        .toast-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+        .toast-success .toast-icon { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .toast-error .toast-icon { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .toast-info .toast-icon { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
 
         /* Animated Mesh Background */
         .bg-layer {
@@ -335,12 +334,9 @@
     <div class="bg-layer" id="main-bg"></div>
     <div id="bg-overlay"></div>
 
-<div id="toast-container"></div>
+    <div id="toast-container"></div>
 
-    
-
-
-<div class="search-bar-container">
+    <div class="search-bar-container">
         <div class="glass-panel flex items-center px-4 py-2 gap-3 focus-within:ring-2 ring-indigo-500/50 transition-all">
             <i class="ph ph-magnifying-glass text-white/40"></i>
             <input type="text" id="global-search" placeholder="Search apps, or ask AI..." class="bg-transparent border-none outline-none text-sm w-full font-medium" oninput="handleGlobalSearch(this.value)" onkeydown="if(event.key === 'Enter') handleSearchEnter(this.value)">
@@ -353,14 +349,6 @@
         </div>
         <div id="search-results" class="search-results-overlay glass-panel hidden flex flex-col p-2 gap-1"></div>
     </div>
-
-
-
-
-
-
-
-
 
     <main class="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 mt-16">
         
@@ -393,8 +381,8 @@
                             <i class="ph-fill ph-sparkle text-xl"></i>
                         </div>
                         <div>
-                            <span class="text-sm font-bold block">✨ AI Studio</span>
-                            <span class="text-[10px] opacity-40 uppercase tracking-wider">Chat & Generation</span>
+                            <span class="text-sm font-bold block">✨ Assistant</span>
+                            <span class="text-[10px] opacity-40 uppercase tracking-wider">Local Chat</span>
                         </div>
                     </button>
                     <button onclick="toggleModal('bookmark-modal')" class="link-card w-full text-left">
@@ -469,7 +457,7 @@
             <header class="flex justify-between items-end px-2">
                 <div>
                     <h1 class="text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-white to-white/40">Terminal</h1>
-                    <p class="text-white/30 text-xs uppercase tracking-[0.3em] mt-2 font-semibold">System Hub v2.0 • AI Integrated</p>
+                    <p class="text-white/30 text-xs uppercase tracking-[0.3em] mt-2 font-semibold">System Hub v2.0 • Local Code</p>
                 </div>
                 <div class="flex gap-3">
                     <button onclick="location.reload()" class="glass-panel p-3 rounded-xl hover:bg-white/10 transition-all hover:scale-110 active:scale-95">
@@ -539,7 +527,7 @@
     </main>
 
     <div class="bottom-dock glass-panel">
-        <div class="dock-item" onclick="toggleModal('ai-modal')" title="AI Studio"><i class="ph-fill ph-sparkle text-xl"></i></div>
+        <div class="dock-item" onclick="toggleModal('ai-modal')" title="Assistant"><i class="ph-fill ph-sparkle text-xl"></i></div>
         <div class="dock-item" onclick="toggleModal('more-apps-modal')" title="App Library"><i class="ph-fill ph-squares-four text-xl"></i></div>
         <div class="dock-item" onclick="toggleModal('bookmark-modal')" title="Bookmark Manager"><i class="ph-fill ph-bookmarks text-xl"></i></div>
         <div class="dock-item" onclick="toggleModal('calc-modal')" title="Calculator"><i class="ph-fill ph-calculator text-xl"></i></div>
@@ -570,16 +558,14 @@
                 <input type="text" id="app-img" placeholder="Image URL (Optional)" class="bg-black/40 border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-pink-500 transition-colors md:col-span-1">
                 
                 <input type="text" list="app-categories" id="app-cat" placeholder="Category" class="bg-black/40 border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-pink-500 transition-colors md:col-span-1">
-                <datalist id="app-categories">
-                    </datalist>
+                <datalist id="app-categories"></datalist>
 
                 <button onclick="addMoreApp()" class="bg-pink-600 hover:bg-pink-500 p-3 rounded-xl font-bold text-sm transition-all active:scale-95 md:col-span-1 flex items-center justify-center gap-2">
                     <i class="ph-bold ph-plus"></i> Add App
                 </button>
             </div>
             
-            <div class="flex-1 overflow-y-auto pr-4" id="apps-container">
-                </div>
+            <div class="flex-1 overflow-y-auto pr-4" id="apps-container"></div>
         </div>
     </div>
 
@@ -600,8 +586,7 @@
                 <button onclick="addBookmark()" class="md:col-span-2 bg-orange-600 hover:bg-orange-500 p-3 rounded-xl font-bold text-sm transition-all active:scale-95">Add Bookmark</button>
             </div>
 
-            <div class="flex-1 overflow-y-auto pr-2 grid grid-cols-2 md:grid-cols-3 gap-3" id="bookmarks-grid">
-                </div>
+            <div class="flex-1 overflow-y-auto pr-2 grid grid-cols-2 md:grid-cols-3 gap-3" id="bookmarks-grid"></div>
         </div>
     </div>
 
@@ -738,11 +723,11 @@
                 </button>
                 <div id="scratchpad-loading" class="hidden flex items-center gap-2 px-2">
                     <div class="spinner w-3 h-3 border-emerald-500"></div>
-                    <span class="text-[10px] opacity-60">Thinking...</span>
+                    <span class="text-[10px] opacity-60">Working...</span>
                 </div>
             </div>
 
-            <textarea id="scratchpad-area" class="flex-1 bg-black/20 border border-white/5 rounded-2xl p-6 text-sm leading-relaxed outline-none focus:border-emerald-500/50 transition-colors resize-none font-medium" placeholder="Start typing... Your notes are auto-saved locally. Use the AI tools above to enhance your text." oninput="saveScratchpad()"></textarea>
+            <textarea id="scratchpad-area" class="flex-1 bg-black/20 border border-white/5 rounded-2xl p-6 text-sm leading-relaxed outline-none focus:border-emerald-500/50 transition-colors resize-none font-medium" placeholder="Start typing... Your notes are auto-saved locally." oninput="saveScratchpad()"></textarea>
             <div class="mt-3 text-[10px] font-bold text-white/20 uppercase text-center tracking-widest">Saved to LocalStorage</div>
         </div>
     </div>
@@ -839,8 +824,8 @@
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg"><i class="ph-fill ph-sparkle text-white text-xl"></i></div>
                     <div>
-                        <span class="font-bold text-xl tracking-tight block leading-none">AI Studio</span>
-                        <span class="text-[10px] opacity-40 uppercase tracking-widest font-bold">Powered by Gemini 2.5</span>
+                        <span class="font-bold text-xl tracking-tight block leading-none">Local Assistant</span>
+                        <span class="text-[10px] opacity-40 uppercase tracking-widest font-bold">Code Based Rules</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
@@ -855,7 +840,7 @@
             <div id="view-chat" class="flex-1 flex flex-col p-6 overflow-hidden">
                 <div id="chat-history" class="flex-1 overflow-y-auto pr-2 flex flex-col gap-3 mb-4 scroll-smooth">
                     <div class="ai-chat-bubble ai-bubble-bot">
-                        Greetings. I am Gemini. I can help you find information, write content, or control this system. Try commands like "open app library", "open calculator" or "change theme".
+                        Greetings. I am your local system assistant. I can help you find information or control this system. Try commands like "open app library", "open calculator" or "change theme". I do not require internet.
                     </div>
                 </div>
                 <div class="flex gap-3 bg-white/5 p-2 rounded-2xl border border-white/10 focus-within:border-purple-500/50 transition-colors relative">
@@ -872,11 +857,11 @@
                     <img id="generated-image" class="hidden w-full h-full object-contain z-10">
                     <div id="image-loading" class="hidden absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-4 backdrop-blur-sm z-20">
                         <div class="spinner w-8 h-8 border-purple-500"></div>
-                        <span class="text-xs font-bold uppercase tracking-widest text-purple-400">Dreaming with Imagen...</span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-purple-400">Processing locally...</span>
                     </div>
                 </div>
                 <div class="flex gap-3 bg-white/5 p-2 rounded-2xl border border-white/10">
-                    <input type="text" id="ai-input-image" placeholder="Describe the image you want to generate..." class="flex-1 bg-transparent border-none outline-none px-4 text-sm font-medium" onkeydown="if(event.key === 'Enter') handleAiAction('image')">
+                    <input type="text" id="ai-input-image" placeholder="Image generation relies on an external API..." class="flex-1 bg-transparent border-none outline-none px-4 text-sm font-medium" onkeydown="if(event.key === 'Enter') handleAiAction('image')">
                     <button onclick="handleAiAction('image')" id="ai-btn-image" class="px-6 h-10 bg-purple-600 rounded-xl flex items-center gap-2 font-bold text-xs hover:bg-purple-500 transition-colors active:scale-95 whitespace-nowrap"><i class="ph-bold ph-magic-wand"></i> ✨ Generate</button>
                 </div>
             </div>
@@ -885,7 +870,6 @@
 
     <script>
         // --- DATA KEYS ---
-        const apiKey = "AIzaSyBPaRGPEjWAWcs3S_R0fpY1rXKgM6oWDHo"; // API Key injected by environment
         const ACCENT_KEY = 'system_accent';
         const WALLPAPER_KEY = 'system_wallpaper';
         const LAYOUT_KEY = 'system_layout';
@@ -894,7 +878,7 @@
         const THEME_KEY = 'systemhub_theme';
         const WIDGETS_KEY = 'systemhub_widgets';
         const ORDER_KEY = 'systemhub_grid_order';
-        const MORE_APPS_KEY = 'systemhub_more_apps'; // NEW KEY
+        const MORE_APPS_KEY = 'systemhub_more_apps'; 
 
         // --- THEME DEFINITIONS ---
         const themes = {
@@ -966,7 +950,7 @@
 
             loadScratchpad();
             renderBookmarks();
-            renderMoreApps(); // Initialize the dynamic App Library
+            renderMoreApps(); 
             initDragAndDrop();
             initSysInfo();
             loadWidgetsState();
@@ -1003,11 +987,9 @@
             const bg = document.getElementById('main-bg');
             let val = '';
             
-            // If it's a URL (starts with data: or http), use it directly
             if (typeOrUrl.startsWith('data:') || typeOrUrl.startsWith('http')) {
                 bg.style.backgroundImage = `url('${typeOrUrl}')`;
             } else {
-                // Preset logic
                 switch(typeOrUrl) {
                     case 'dark': val = 'radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%)'; break;
                     case 'purple': val = 'radial-gradient(circle at 50% 50%, #2e1065 0%, #020617 100%)'; break;
@@ -1015,7 +997,7 @@
                     case 'black': val = '#000'; break;
                     default: val = '#0f172a';
                 }
-                bg.style.background = val; // Reset to gradient/color
+                bg.style.background = val; 
                 localStorage.setItem(WALLPAPER_KEY, typeOrUrl);
             }
         }
@@ -1118,7 +1100,6 @@
             apps.push({ id: Date.now(), name, url, img, cat });
             localStorage.setItem(MORE_APPS_KEY, JSON.stringify(apps));
 
-            // Reset fields
             document.getElementById('app-name').value = '';
             document.getElementById('app-url').value = '';
             document.getElementById('app-img').value = '';
@@ -1142,21 +1123,18 @@
             container.innerHTML = '';
             datalist.innerHTML = '';
 
-            // Group apps by category
             const grouped = apps.reduce((acc, app) => {
                 if (!acc[app.cat]) acc[app.cat] = [];
                 acc[app.cat].push(app);
                 return acc;
             }, {});
 
-            // Populate Datalist for the input dropdown
             Object.keys(grouped).forEach(cat => {
                 const option = document.createElement('option');
                 option.value = cat;
                 datalist.appendChild(option);
             });
 
-            // Render grouped apps
             for (const [cat, items] of Object.entries(grouped)) {
                 const catDiv = document.createElement('div');
                 catDiv.innerHTML = `
@@ -1325,10 +1303,9 @@
                 }
             });
 
-            // Add "Ask AI" option at top
             const aiDiv = document.createElement('div');
             aiDiv.className = "flex items-center gap-3 p-2 hover:bg-purple-600/30 rounded-xl cursor-pointer transition-colors border border-purple-500/20";
-            aiDiv.innerHTML = `<i class="ph-fill ph-sparkle text-purple-400"></i><span class="text-sm font-semibold">Ask AI: "${query}"</span>`;
+            aiDiv.innerHTML = `<i class="ph-fill ph-sparkle text-purple-400"></i><span class="text-sm font-semibold">Ask Assistant: "${query}"</span>`;
             aiDiv.onclick = () => {
                 toggleModal('ai-modal');
                 switchTab('chat');
@@ -1356,10 +1333,9 @@
         function handleSearchEnter(val) {
              const resultsBox = document.getElementById('search-results');
              if(resultsBox.children.length > 0) {
-                 resultsBox.children[0].click(); // Click "Ask AI" or first result
+                 resultsBox.children[0].click(); 
              }
         }
-
 
         window.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -1420,6 +1396,7 @@
             }
         }
 
+        // Without an API, these AI Modify functions return local feedback instead
         async function aiModifyNote(mode) {
             const area = document.getElementById('scratchpad-area');
             const text = area.value;
@@ -1430,23 +1407,25 @@
             loader.classList.remove('hidden');
             loader.classList.add('flex');
             
-            let prompt = "";
-            if (mode === 'summarize') prompt = `Summarize this text in one concise sentence: "${text}"`;
-            else if (mode === 'grammar') prompt = `Fix the grammar and spelling of this text. Return ONLY the corrected text, no explanations: "${text}"`;
-            else if (mode === 'expand') prompt = `Continue writing this text. Add 2-3 sentences that flow naturally. Return ONLY the new sentences: "${text}"`;
+            // Simulating API processing time locally
+            await new Promise(r => setTimeout(r, 800)); 
+            
+            let res = "";
+            if (mode === 'summarize') res = "[Local Assistant]: Summary generation requires AI. Currently running in local mode.";
+            else if (mode === 'grammar') res = "[Local Assistant]: Grammar checking requires AI. Currently running in local mode.";
+            else if (mode === 'expand') res = "[Local Assistant]: Continuing text requires AI. Currently running in local mode.";
             
             try {
-                const res = await generateAiText(prompt);
                 if (mode === 'summarize') {
                     area.value = text + "\n\n--- SUMMARY ---\n" + res;
                 } else if (mode === 'grammar') {
-                    area.value = res;
+                    area.value = text + "\n\n" + res;
                 } else if (mode === 'expand') {
                     area.value = text + " " + res;
                 }
                 saveScratchpad();
             } catch (e) {
-                alert("AI Error: " + e.message);
+                alert("Error: " + e.message);
             } finally {
                 loader.classList.add('hidden');
                 loader.classList.remove('flex');
@@ -1480,6 +1459,40 @@
             return true;
         }
 
+        // -----------------------------------------
+        // LOCAL CODE-BASED CHATBOT REPLACEMENT 
+        // -----------------------------------------
+        async function generateAiText(prompt) {
+            const input = prompt.toLowerCase().trim();
+
+            // This is your "Brain" - add any questions and answers here!
+            const responses = {
+                "hello": "Hello! I am the System Hub offline assistant. How can I help you?",
+                "hi": "Hi there! Systems are nominal. What do you need?",
+                "who are you": "I am a rule-based chatbot running locally in your browser. No AI required!",
+                "version": "You are currently running System Hub Pro v2.0.",
+                "help": "You can ask me about the system, or use commands like 'open calculator' or 'change theme'.",
+                "creator": "This system was built to be a high-performance productivity dashboard.",
+                "thanks": "You're welcome! Let me know if you need anything else.",
+                "bye": "Goodbye! Have a productive session."
+            };
+
+            // Keyword matching logic
+            if (input.includes("weather")) return "I don't have a live weather module yet, but it looks like a great day for coding!";
+            if (input.includes("time")) return "The current system time is " + new Date().toLocaleTimeString();
+            if (input.includes("status")) return "All systems (Storage, RAM, and UI) are functioning at 100%.";
+            if (input.includes("joke")) return "Why do programmers prefer dark mode? Because light attracts bugs!";
+
+            // Return the response if found in our list, otherwise a fallback message
+            return responses[input] || "I'm not sure about that. Try asking for 'help' or check the App Library.";
+        }
+
+        // Placeholder for local image mock response
+        async function generateAiImage(prompt) {
+            alert("Image generation requires an external AI API connection. Currently running in local mode.");
+            throw new Error("Local mode active");
+        }
+
         async function handleAiAction(type) {
             if (type === 'chat') {
                 const input = document.getElementById('ai-input-text');
@@ -1498,17 +1511,21 @@
                     return;
                 }
 
-                // 2. Call LLM
+                // 2. Call Local Function
                 const loadingBubble = appendMessage('bot', '<div class="spinner"></div>');
-                try {
-                    const response = await generateAiText(text);
-                    const parsed = marked.parse(response);
-                    loadingBubble.innerHTML = parsed;
-                } catch (e) { 
-                    loadingBubble.innerHTML = "Error: Connection lost."; 
-                } finally {
-                    btn.disabled = false;
-                }
+                
+                // Added a tiny artificial delay to make it feel natural
+                setTimeout(async () => {
+                    try {
+                        const response = await generateAiText(text);
+                        const parsed = marked.parse(response);
+                        loadingBubble.innerHTML = parsed;
+                    } catch (e) { 
+                        loadingBubble.innerHTML = "Error: Local logic failed."; 
+                    } finally {
+                        btn.disabled = false;
+                    }
+                }, 300);
             } else if (type === 'image') {
                 const input = document.getElementById('ai-input-image');
                 const btn = document.getElementById('ai-btn-image');
@@ -1529,7 +1546,6 @@
                     placeholder.classList.add('hidden');
                 } catch (e) { 
                     console.error(e);
-                    alert("Failed to generate image.");
                 } finally { 
                     loading.classList.add('hidden');
                     btn.disabled = false;
@@ -1548,7 +1564,7 @@
                 const dataUrl = await generateAiImage("Wallpaper, abstract, high quality, 4k, " + prompt);
                 setWallpaper(dataUrl);
             } catch(e) {
-                alert("Could not generate wallpaper");
+                console.log("Wallpaper gen requires API");
             } finally {
                 btn.innerHTML = originalIcon;
             }
@@ -1564,35 +1580,6 @@
             document.getElementById('clock').innerHTML = `${hours}:${minutes}<span class="text-2xl ml-2 opacity-40 font-light">${ampm}</span>`;
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('date').innerText = now.toLocaleDateString('en-US', options);
-        }
-
-        async function fetchWithRetry(url, options, maxRetries = 3) {
-            let delay = 1000;
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    if (response.ok) return await response.json();
-                } catch (e) {}
-                await new Promise(r => setTimeout(r, delay)); delay *= 2;
-            }
-            throw new Error("Failed");
-        }
-
-        async function generateAiText(prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const payload = { 
-                contents: [{ parts: [{ text: prompt }] }], 
-                systemInstruction: { parts: [{ text: "You are Gemini, a helpful AI assistant integrated into a web-based operating system called System Hub. You are concise, witty, and helpful. Keep responses relatively short." }] } 
-            };
-            const result = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            return result.candidates?.[0]?.content?.parts?.[0]?.text || "No response.";
-        }
-
-        async function generateAiImage(prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-            const payload = { instances: { prompt: prompt }, parameters: { sampleCount: 1 } };
-            const result = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            return `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
         }
 
         function switchTab(tab) {
@@ -1627,6 +1614,7 @@
         function calcDelete() { calcExpr = calcExpr.slice(0,-1) || "0"; updateDisp(); }
         function calcEquals() { try { const res = Function('"use strict";return (' + calcExpr + ')')(); calcExpr = String(Number(res.toFixed(4))); updateDisp(); } catch { calcDisplay.innerText = "Error"; calcExpr = ""; } }
         function updateDisp() { calcDisplay.innerText = calcExpr || "0"; }
+
 // --- TOAST NOTIFICATIONS ---
 function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
@@ -1673,7 +1661,7 @@ function startVoiceRecognition() {
 
     recognition.onstart = function() {
         icon.classList.remove('text-white/40');
-        icon.classList.add('text-red-500', 'animate-pulse'); // Mic turns red and pulses
+        icon.classList.add('text-red-500', 'animate-pulse'); 
         showToast("Listening... Speak a command.", "info");
     };
 
@@ -1686,7 +1674,7 @@ function startVoiceRecognition() {
         
         // 1. Check if it's a direct system command (like "open calculator")
         if (!parseCommand(transcript)) {
-            // 2. If it's not a system command, automatically ask Gemini
+            // 2. If it's not a system command, automatically ask the Local Bot
             toggleModal('ai-modal');
             switchTab('chat');
             document.getElementById('ai-input-text').value = transcript;
@@ -1710,8 +1698,4 @@ function startVoiceRecognition() {
 }
     </script>
 </body>
-
 </html>
-
-
-
