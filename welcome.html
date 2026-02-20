@@ -189,10 +189,10 @@
 
         // Default Data
         const defaultLinks = [
-            { id: '1', name: 'GitHub', url: 'https://github.com' },
-            { id: '2', name: 'Localhost:3000', url: 'site-apps/apps.html' },
-            { id: '3', name: 'Media Player', url: 'site-apps/media--player.html' },
-            { id: '4', name: 'Personal Search-Engine', url: 'site-apps/search-engine.html' }
+            { id: '1', name: 'GitHub', url: 'https://github.com', customIcon: 'github' },
+            { id: '2', name: 'Localhost:3000', url: 'site-apps/apps.html', customIcon: 'layout-grid' },
+            { id: '3', name: 'Media Player', url: 'site-apps/media--player.html', customIcon: 'headphones' },
+            { id: '4', name: 'Personal Search-Engine', url: 'site-apps/search-engine.html', customIcon: 'search' }
         ];
 
         // State Management
@@ -200,11 +200,37 @@
         let isRearranging = false;
         let draggedId = null;
 
-        // Load links from LocalStorage
+        // Load links from LocalStorage - SMART MERGE FIX APPLIED HERE
         function loadLinks() {
-            const saved = localStorage.getItem('nexus_links');
+            const saved = localStorage.getItem('aether_links') || localStorage.getItem('nexus_links');
+            
             if (saved) {
-                links = JSON.parse(saved);
+                let parsedLinks = JSON.parse(saved);
+                let updated = false;
+
+                // Patch existing links with custom icons if they are default links
+                links = parsedLinks.map(savedLink => {
+                    const defaultMatch = defaultLinks.find(dl => dl.url === savedLink.url);
+                    if (defaultMatch && !savedLink.customIcon && defaultMatch.customIcon && !savedLink.imageUrl) {
+                        updated = true;
+                        return { ...savedLink, customIcon: defaultMatch.customIcon };
+                    }
+                    return savedLink;
+                });
+                
+                // Smart Merge: Check if there are any new default links that aren't in the saved list yet
+                defaultLinks.forEach(defaultLink => {
+                    // We check by URL so we don't accidentally add duplicates
+                    const exists = links.some(savedLink => savedLink.url === defaultLink.url);
+                    if (!exists) {
+                        links.push(defaultLink);
+                        updated = true;
+                    }
+                });
+                
+                // If we injected new default links or updated icons, save the updated list
+                if (updated) saveLinks();
+                
             } else {
                 links = [...defaultLinks];
                 saveLinks();
@@ -212,7 +238,7 @@
             renderGrid();
         }
 
-        // Save links to LocalStorage
+        // Save links to LocalStorage (Updated to aether_links key)
         function saveLinks() {
             localStorage.setItem('nexus_links', JSON.stringify(links));
         }
@@ -252,12 +278,13 @@
                     }
                     
                     // Determine icon based on URL type
-                    const isLocal = link.url.startsWith('.') || link.url.startsWith('file://');
+                    const isLocal = link.url.startsWith('.') || link.url.startsWith('file://') || !link.url.startsWith('http');
                     const iconName = isLocal ? 'hard-drive' : 'globe';
                     
-                    // Make the entire card clickable and pass it to openSite function (ONLY if not rearranging)
+                    // Native HTML href link behavior when NOT rearranging
+                    let hrefOverlay = '';
                     if (!isRearranging) {
-                        card.setAttribute('onclick', `openSite('${link.url.replace(/'/g, "\\'")}', ${isLocal})`);
+                        hrefOverlay = `<a href="${link.url}" target="${isLocal ? '_self' : '_blank'}" class="absolute inset-0 z-10 rounded-2xl"></a>`;
                     }
                     
                     // Determine what icon to show
@@ -265,8 +292,11 @@
                     if (link.imageUrl) {
                         // 1. Custom uploaded icon
                         iconHTML = `<img src="${link.imageUrl}" alt="Icon" class="w-full h-full object-cover rounded-xl">`;
+                    } else if (link.customIcon) {
+                        // 2. Specific custom assigned lucide icon (for default links)
+                        iconHTML = `<i data-lucide="${link.customIcon}"></i>`;
                     } else if (!isLocal) {
-                        // 2. Web URL - fetch favicon automatically using Google's service
+                        // 3. Web URL - fetch favicon automatically using Google's service
                         try {
                             // Extract domain (e.g., "github.com" from "https://github.com/user/repo")
                             const domain = new URL(link.url).hostname;
