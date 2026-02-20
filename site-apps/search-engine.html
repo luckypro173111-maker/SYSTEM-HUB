@@ -649,5 +649,105 @@
         init();
 
     </script>
+    <!-- ========================================== -->
+    <!-- COPY-PASTE CURSOR EFFECT START -->
+    <!-- You can copy this entire block into any HTML file -->
+    <!-- ========================================== -->
+    <style>
+        /* Hide default cursor */
+        *, *::before, *::after {
+            cursor: none !important;
+        }
+
+        .custom-cursor-dot,
+        .custom-cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 999999;
+            pointer-events: none;
+        }
+
+        .custom-cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #ffffff; /* White color */
+            transition: transform 0.15s ease-out;
+        }
+
+        .custom-cursor-outline {
+            width: 32px;
+            height: 32px;
+            border: 2px solid rgba(255, 255, 255, 0.5); /* White transparent */
+            transition: width 0.2s ease-out, height 0.2s ease-out, background-color 0.2s ease-out;
+        }
+
+        /* Hover effect state */
+        .custom-cursor-outline.cursor-hover {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+
+    <div class="custom-cursor-dot" id="cursor-dot"></div>
+    <div class="custom-cursor-outline" id="cursor-outline"></div>
+
+    <script>
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let outlineX = mouseX;
+        let outlineY = mouseY;
+
+        // Track mouse position
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Dot follows instantly
+            cursorDot.style.left = `${mouseX}px`;
+            cursorDot.style.top = `${mouseY}px`;
+        });
+
+        // Smooth follow animation for outline
+        function animateCursor() {
+            let distX = mouseX - outlineX;
+            let distY = mouseY - outlineY;
+            
+            outlineX += distX * 0.15; // Speed of the trailing effect (0.1 to 1)
+            outlineY += distY * 0.15;
+            
+            cursorOutline.style.left = `${outlineX}px`;
+            cursorOutline.style.top = `${outlineY}px`;
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Event delegation for hover states (works with dynamically added elements)
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.closest('a, button, input, [onclick], i')) {
+                cursorOutline.classList.add('cursor-hover');
+                cursorDot.style.transform = 'translate(-50%, -50%) scale(0.5)';
+            }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            if (e.target.closest('a, button, input, [onclick], i')) {
+                cursorOutline.classList.remove('cursor-hover');
+                cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+            }
+        });
+    </script>
+    <!-- ========================================== -->
+    <!-- COPY-PASTE CURSOR EFFECT END -->
+    <!-- ========================================== -->
+
 </body>
 </html>
