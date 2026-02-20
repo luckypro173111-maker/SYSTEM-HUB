@@ -1,1 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Search Engine</title>
+    
+    <!-- Modern Sans-Serif Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Brand & System Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <style>
+        :root {
+            /* True OLED Black & Premium Grays */
+            --bg-oled: #000000;
+            --surface-glass: rgba(20, 20, 20, 0.6);
+            --surface-hover: rgba(255, 255, 255, 0.05);
+            
+            /* Accents & Borders */
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-focus: rgba(255, 255, 255, 0.25);
+            --glow-primary: rgba(255, 255, 255, 0.1);
+            --glow-error: rgba(255, 68, 68, 0.2);
+            --border-error: rgba(255, 68, 68, 0.5);
+            
+            /* Typography */
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-tertiary: #555555;
+            
+            /* Pro-level Bezier Curves for Butter-Smooth Animations */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: var(--bg-oled);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Subtle Animated Background Effect */
+        .ambient-background {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 60%),
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0;
+            animation: fade-in 1.5s var(--ease-out-expo) forwards;
+        }
+
+        /* Main Centered Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 700px;
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slide-up-fade 1s var(--ease-out-expo) 0.2s forwards;
+        }
+
+        /* Elegant Title */
+        .title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #ffffff 0%, #737373 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            user-select: none;
+        }
+
+        /* Search Bar Wrapper */
+        .search-wrapper {
+            width: 100%;
+            position: relative;
+            border-radius: 24px;
+            background: var(--surface-glass);
+            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s var(--ease-out-expo);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+        }
+
+        .search-wrapper.focused {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 1px var(--border-focus), 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 40px var(--glow-primary);
+            transform: scale(1.02);
+            background: rgba(30, 30, 30, 0.7);
+        }
+
+        /* Error Shake Animation */
+        .search-wrapper.error {
+            animation: shake 0.4s var(--ease-out-expo) forwards;
+            border-color: var(--border-error);
+            box-shadow: 0 0 30px var(--glow-error);
+        }
+
+        /* Search Input */
+        .search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            padding: 24px 80px 24px 64px;
+            outline: none;
+            font-weight: 400;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* Dynamic Engine Icon */
+        .search-icon {
+            position: absolute;
+            left: 24px;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            transition: all 0.3s var(--ease-elastic);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+        }
+
+        /* Keyboard Shortcut Hint */
+        .shortcut-hint {
+            position: absolute;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .search-wrapper.focused .shortcut-hint {
+            opacity: 0;
+        }
+
+        kbd {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-weight: 500;
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+
+        /* Command Suggestions Dropdown */
+        .suggestions-dropdown {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 0;
+            right: 0;
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s var(--ease-out-expo);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+            z-index: 20;
+        }
+
+        .search-wrapper.focused .suggestions-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            gap: 16px;
+        }
+
+        .suggestion-item:hover, .suggestion-item.active {
+            background: var(--surface-hover);
+        }
+
+        .sugg-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .sugg-details {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .sugg-cmd {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cmd-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        .sugg-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Right Docked Quick Links */
+        .quick-links {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%) translateX(20px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 50;
+            opacity: 0;
+            animation: fade-in-right 1s var(--ease-out-expo) 0.4s forwards;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1.25rem;
+            transition: all 0.3s var(--ease-elastic);
+            position: relative;
+        }
+
+        /* Tooltip (Slide out to the left) */
+        .quick-link::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            right: 100%;
+            margin-right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid var(--border-subtle);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .quick-link:hover::after {
+            opacity: 1;
+            visibility: visible;
+            margin-right: 15px;
+        }
+
+        .quick-link:hover {
+            transform: translateX(-5px) scale(1.1);
+            background: var(--surface-hover);
+            border-color: rgba(255,255,255,0.2);
+            color: var(--text-primary);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        /* Brand Specific Hover Colors */
+        .quick-link.yt:hover { color: #ff0000; border-color: rgba(255,0,0,0.3); }
+        .quick-link.google:hover { color: #4285f4; border-color: rgba(66,133,244,0.3); }
+        .quick-link.wiki:hover { color: #ffffff; border-color: rgba(255,255,255,0.3); }
+        .quick-link.chat:hover { color: #10a37f; border-color: rgba(16,163,127,0.3); }
+        .quick-link.github:hover { color: #ffffff; border-color: rgba(255,255,255,0.3); }
+        .quick-link.gmail:hover { color: #ea4335; border-color: rgba(234,67,53,0.3); }
+        .quick-link.gemini:hover { color: #a15ee8; border-color: rgba(161,94,232,0.3); }
+
+        /* Keyframes */
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fade-in-right {
+            from { opacity: 0; transform: translateY(-50%) translateX(20px); }
+            to { opacity: 1; transform: translateY(-50%) translateX(0); }
+        }
+
+        @keyframes slide-up-fade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) scale(1.02); }
+            20% { transform: translateX(-10px) scale(1.02); }
+            40% { transform: translateX(10px) scale(1.02); }
+            60% { transform: translateX(-5px) scale(1.02); }
+            80% { transform: translateX(5px) scale(1.02); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 800px) {
+            .title { font-size: 2rem; }
+            .search-input { font-size: 1.1rem; padding: 20px 20px 20px 56px; }
+            .search-icon { left: 20px; font-size: 1.1rem; }
+            .shortcut-hint { display: none; }
+            
+            /* Move dock back to bottom on smaller screens */
+            .quick-links {
+                position: static;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                transform: none;
+                margin-top: 40px;
+                animation: slide-up-fade 1s var(--ease-out-expo) 0.4s forwards;
+            }
+
+            .quick-link { width: 44px; height: 44px; font-size: 1.1rem; }
+            .quick-link:hover { transform: translateY(-5px) scale(1.1); }
+
+            /* Adjust tooltip direction for bottom dock */
+            .quick-link::after {
+                top: 100%;
+                right: 50%;
+                transform: translateX(50%);
+                margin-right: 0;
+                margin-top: -10px;
+            }
+
+            .quick-link:hover::after {
+                margin-top: 15px;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Subtle Grid Background -->
+    <div class="ambient-background"></div>
+
+    <main class="container">
+        <!-- Title -->
+        <h1 class="title">Personal Search Engine</h1>
+
+        <!-- Interactive Search Component -->
+        <div class="search-wrapper" id="search-wrapper">
+            <!-- Dynamic Icon -->
+            <i class="fa-solid fa-magnifying-glass search-icon" id="search-icon"></i>
+            
+            <!-- Input Field -->
+            <input type="text" 
+                   id="search-input" 
+                   class="search-input" 
+                   placeholder="Search or type a command..." 
+                   autocomplete="off" 
+                   spellcheck="false"
+                   autofocus>
+            
+            <!-- Keyboard Hint -->
+            <div class="shortcut-hint">
+                <kbd>Ctrl</kbd> + <kbd>K</kbd>
+            </div>
+
+            <!-- Command Suggestions Palette -->
+            <div class="suggestions-dropdown" id="suggestions">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Quick Links (Right Dock) -->
+    <div class="quick-links" id="quick-links">
+        <!-- Injected via JS to maintain DRY code -->
+    </div>
+
+    <script>
+        /**
+         * Search Engine Configuration
+         * Maps commands to search URLs, homepages, and visual metadata.
+         */
+        const engines = {
+            'yt': { 
+                url: 'https://www.youtube.com/results?search_query=', 
+                home: 'https://www.youtube.com', 
+                name: 'YouTube', 
+                icon: 'fa-brands fa-youtube', 
+                color: '#ff0000',
+                class: 'yt'
+            },
+            'g': { 
+                url: 'https://www.google.com/search?q=', 
+                home: 'https://www.google.com', 
+                name: 'Google', 
+                icon: 'fa-brands fa-google', 
+                color: '#4285f4',
+                class: 'google'
+            },
+            'wiki': { 
+                url: 'https://en.wikipedia.org/wiki/Special:Search?search=', 
+                home: 'https://en.wikipedia.org', 
+                name: 'Wikipedia', 
+                icon: 'fa-brands fa-wikipedia-w', 
+                color: '#ffffff',
+                class: 'wiki'
+            },
+            'chat': { 
+                url: 'https://chatgpt.com/?q=', 
+                home: 'https://chatgpt.com', 
+                name: 'ChatGPT', 
+                icon: 'fa-solid fa-robot', 
+                color: '#10a37f',
+                class: 'chat'
+            },
+            'gem': { 
+                url: 'https://gemini.google.com/app?q=', 
+                home: 'https://gemini.google.com', 
+                name: 'Gemini', 
+                icon: 'fa-solid fa-sparkles', 
+                color: '#a15ee8',
+                class: 'gemini'
+            },
+            'gh': { 
+                url: 'https://github.com/search?q=', 
+                home: 'https://github.com', 
+                name: 'GitHub', 
+                icon: 'fa-brands fa-github', 
+                color: '#ffffff',
+                class: 'github'
+            },
+            'gm': { 
+                url: 'https://mail.google.com/mail/u/0/#search/', 
+                home: 'https://mail.google.com', 
+                name: 'Gmail', 
+                icon: 'fa-solid fa-envelope', 
+                color: '#ea4335',
+                class: 'gmail'
+            }
+        };
+
+        // DOM Elements
+        const searchWrapper = document.getElementById('search-wrapper');
+        const searchInput = document.getElementById('search-input');
+        const searchIcon = document.getElementById('search-icon');
+        const suggestionsBox = document.getElementById('suggestions');
+        const quickLinksBox = document.getElementById('quick-links');
+
+        // --- Initialization ---
+
+        function init() {
+            renderSuggestions();
+            renderQuickLinks();
+            
+            // Ensure focus on load
+            setTimeout(() => searchInput.focus(), 100);
+        }
+
+        // --- Rendering ---
+
+        function renderSuggestions() {
+            suggestionsBox.innerHTML = Object.entries(engines).map(([cmd, data]) => `
+                <div class="suggestion-item" onclick="applyCommand('${cmd}')">
+                    <div class="sugg-icon-box" style="color: ${data.color}; box-shadow: inset 0 0 10px ${data.color}20;">
+                        <i class="${data.icon}"></i>
+                    </div>
+                    <div class="sugg-details">
+                        <div class="sugg-cmd">
+                            ${data.name}
+                            <span class="cmd-badge">${cmd}</span>
+                        </div>
+                        <div class="sugg-desc">Search with ${data.name}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderQuickLinks() {
+            quickLinksBox.innerHTML = Object.entries(engines).map(([cmd, data]) => `
+                <a href="${data.home}" class="quick-link ${data.class}" data-tooltip="${data.name}">
+                    <i class="${data.icon}"></i>
+                </a>
+            `).join('');
+        }
+
+        // --- Event Listeners ---
+
+        // Visual focus states
+        searchInput.addEventListener('focus', () => searchWrapper.classList.add('focused'));
+        searchInput.addEventListener('blur', () => {
+            // Small timeout to allow clicking suggestion items before hiding
+            setTimeout(() => searchWrapper.classList.remove('focused'), 200);
+        });
+
+        // Dynamic Icon Updating while typing
+        searchInput.addEventListener('input', () => {
+            const val = searchInput.value.trim();
+            const firstWord = val.split(' ')[0].toLowerCase();
+
+            // If a valid command is typed followed by a space
+            if (engines[firstWord] && val.length > firstWord.length) {
+                const engine = engines[firstWord];
+                searchIcon.className = `${engine.icon} search-icon`;
+                searchIcon.style.color = engine.color;
+                searchIcon.style.transform = 'scale(1.2)';
+            } else {
+                // Default Google/Search state
+                searchIcon.className = 'fa-solid fa-magnifying-glass search-icon';
+                searchIcon.style.color = 'var(--text-secondary)';
+                searchIcon.style.transform = 'scale(1)';
+            }
+        });
+
+        // Keyboard Shortcuts & Submission
+        document.addEventListener('keydown', (e) => {
+            // Ctrl + K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                executeSearch();
+            }
+        });
+
+        // --- Core Logic ---
+
+        function applyCommand(cmd) {
+            searchInput.value = cmd + ' ';
+            searchInput.focus();
+            
+            // Trigger input event to update icon
+            searchInput.dispatchEvent(new Event('input'));
+        }
+
+        function triggerErrorShake() {
+            searchWrapper.classList.remove('shake'); // Reset if currently shaking
+            void searchWrapper.offsetWidth; // Trigger reflow
+            searchWrapper.classList.add('error');
+            setTimeout(() => {
+                searchWrapper.classList.remove('error');
+            }, 400);
+        }
+
+        function executeSearch() {
+            const rawQuery = searchInput.value.trim();
+            
+            // Error handling for empty execution
+            if (!rawQuery) {
+                triggerErrorShake();
+                return;
+            }
+
+            const parts = rawQuery.split(' ');
+            const command = parts[0].toLowerCase();
+            const actualQuery = parts.slice(1).join(' ');
+
+            // Check if the first word is a registered command
+            if (engines[command]) {
+                const engine = engines[command];
+                if (actualQuery) {
+                    // Command with query -> Execute Search
+                    window.location.href = engine.url + encodeURIComponent(actualQuery);
+                } else {
+                    // Command without query -> Open Homepage
+                    window.location.href = engine.home;
+                }
+            } else {
+                // No command detected -> Default to Google Search
+                window.location.href = engines['g'].url + encodeURIComponent(rawQuery);
+            }
+        }
+
+        // Boot up
+        init();
+
+    </script>
+</body>
+</html>
