@@ -1045,7 +1045,9 @@
                 pathEl.innerHTML = `Search Results: ${currentFilter.toUpperCase()}S`;
             } else {
                 if (currentPath[0] === 'vault') {
-                    pathEl.innerHTML = `${icons.vault} Hidden Vault <button class="lock-btn" onclick="lockVault()" style="margin-left: 10px;">Lock</button>`;
+                    pathEl.innerHTML = `${icons.vault} Hidden Vault 
+                    <button class="lock-btn" onclick="lockVault()" style="margin-left: 10px;">Lock</button>
+                    <button class="lock-btn" onclick="clearVault()" style="margin-left: 4px;" title="Delete all items in the vault">Clear All</button>`;
                 } else {
                     pathEl.innerText = currentPath.map(p => fileSystem[p]?.name || 'Root').join(' / ');
                 }
@@ -1134,6 +1136,21 @@
         function lockVault() {
             isVaultUnlocked = false;
             navigateHome();
+        }
+
+        async function clearVault() {
+            if (Object.keys(fileSystem.vault.children).length === 0) {
+                await showDialog("Vault is Empty", "There are no items to delete.", false);
+                return;
+            }
+
+            const confirmed = await showDialog("Clear Vault", "Are you sure you want to permanently delete ALL hidden items? This action cannot be undone.", false, '', true);
+            if (confirmed) {
+                fileSystem.vault.children = {};
+                currentPath = ['vault']; // Reset to vault root just in case user was in a subfolder inside the vault
+                saveFS();
+                render();
+            }
         }
 
         // --- Navigation ---
