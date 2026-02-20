@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether | Local Dashboard</title>
+    
+    <!-- Beast Fonts: Space Grotesk for a sleek, modern, aggressive look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS for Dark Aesthetic Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Space Grotesk"', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: {
+                            900: '#0a0a0a',
+                            800: '#121212',
+                            700: '#1e1e1e',
+                        },
+                        accent: {
+                            500: '#3b82f6', // sleek blue
+                            600: '#2563eb',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            background-color: #050505;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #050505 50%);
+            background-attachment: fixed;
+        }
+        
+        .glass-card {
+            background: rgba(30, 30, 30, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="text-gray-200 font-sans min-h-screen flex flex-col selection:bg-accent-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="border-b border-white/10 bg-dark-900/50 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-accent-500/20 rounded-lg text-accent-500">
+                    <i data-lucide="hexagon"></i>
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight text-white">AETHER<span class="text-accent-500">.</span></h1>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button onclick="toggleRearrange()" id="rearrangeBtn" class="flex items-center gap-2 bg-dark-800 border border-white/10 text-white px-5 py-2.5 rounded-full font-semibold hover:bg-dark-700 transition-colors duration-200 shadow-[0_0_15px_rgba(0,0,0,0.2)]">
+                    <i data-lucide="move" class="w-4 h-4" id="rearrangeIcon"></i>
+                    <span id="rearrangeText">Rearrange</span>
+                </button>
+                <button onclick="openModal()" class="flex items-center gap-2 bg-white text-black px-5 py-2.5 rounded-full font-semibold hover:bg-gray-200 transition-colors duration-200 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Add Site</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-12 w-full">
+        
+        <div class="mb-10">
+            <h2 class="text-3xl font-bold text-white mb-2">Welcome Back.</h2>
+            <p class="text-gray-400">Manage your local files and favorite web destinations.</p>
+        </div>
+
+        <!-- Links Grid -->
+        <div id="linksGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Cards will be injected here by JavaScript -->
+        </div>
+
+        <!-- Empty State (Hidden by default) -->
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center">
+            <div class="w-20 h-20 bg-dark-700 rounded-full flex items-center justify-center mb-6 text-gray-500">
+                <i data-lucide="folder-open" class="w-10 h-10"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-2">No items found</h3>
+            <p class="text-gray-400 max-w-md mx-auto mb-6">Your dashboard is empty. Add local HTML files or web URLs to get started.</p>
+            <button onclick="openModal()" class="text-accent-500 hover:text-accent-400 font-medium flex items-center gap-2 mx-auto">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i> Add your first link
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Add Link Modal -->
+    <div id="addModal" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md transition-opacity" onclick="closeModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative w-full max-w-md bg-[#050505] rounded-xl p-8 shadow-[0_0_50px_rgba(0,0,0,1)] border border-white/10 transform scale-95 opacity-0 transition-all duration-300 overflow-hidden" id="modalContent">
+            
+            <!-- Accent Line -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
+
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors p-2">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <i data-lucide="zap" class="w-6 h-6 text-white"></i>
+                Initialize Link
+            </h3>
+            
+            <form id="addForm" onsubmit="handleFormSubmit(event)">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-xs font-bold tracking-widest text-gray-400 uppercase mb-2">Site Designation</label>
+                        <input type="text" id="siteName" required placeholder="Project Alpha" 
+                            class="w-full bg-[#0a0a0a] border border-white/5 rounded-lg px-4 py-3.5 text-white placeholder-gray-700 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all font-medium">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold tracking-widest text-gray-400 uppercase mb-2">Target Coordinates (URL)</label>
+                        <input type="text" id="siteUrl" required placeholder="https://..." 
+                            class="w-full bg-[#0a0a0a] border border-white/5 rounded-lg px-4 py-3.5 text-white placeholder-gray-700 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all font-medium">
+                        <p class="text-[10px] text-gray-600 mt-2 uppercase tracking-wide">Accepts absolute (file:///) or relative (./) paths.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold tracking-widest text-gray-400 uppercase mb-2">Custom Icon (Optional)</label>
+                        <input type="file" id="siteIcon" accept="image/*" 
+                            class="w-full bg-[#0a0a0a] border border-white/5 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all font-medium file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-white file:text-black hover:file:bg-gray-200 cursor-pointer">
+                    </div>
+                </div>
+
+                <div class="mt-8 flex items-center justify-end gap-4">
+                    <button type="button" onclick="closeModal()" class="text-sm text-gray-400 hover:text-white font-medium transition-colors px-4 py-2">
+                        Abort
+                    </button>
+                    <button type="submit" class="bg-white hover:bg-gray-200 text-black px-6 py-3 rounded-lg font-bold transition-all shadow-[0_0_15px_rgba(255,255,255,0.15)] flex items-center gap-2">
+                        <span>Execute</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Default Data
+        const defaultLinks = [
+            { id: '1', name: 'GitHub', url: 'https://github.com' },
+            { id: '2', name: 'Localhost:3000', url: 'http://localhost:3000' }
+        ];
+
+        // State Management
+        let links = [];
+        let isRearranging = false;
+        let draggedId = null;
+
+        // Load links from LocalStorage
+        function loadLinks() {
+            const saved = localStorage.getItem('nexus_links');
+            if (saved) {
+                links = JSON.parse(saved);
+            } else {
+                links = [...defaultLinks];
+                saveLinks();
+            }
+            renderGrid();
+        }
+
+        // Save links to LocalStorage
+        function saveLinks() {
+            localStorage.setItem('nexus_links', JSON.stringify(links));
+        }
+
+        // Render the Grid
+        function renderGrid() {
+            const grid = document.getElementById('linksGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            grid.innerHTML = '';
+
+            if (links.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            } else {
+                grid.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+
+                links.forEach(link => {
+                    // Create card element
+                    const card = document.createElement('div');
+                    
+                    // Styling for rearrange mode
+                    const rearrangeClasses = isRearranging ? 'cursor-move ring-1 ring-accent-500/50 hover:ring-accent-500' : '';
+                    card.className = `glass-card rounded-2xl p-6 relative group flex flex-col h-full ${rearrangeClasses}`;
+                    card.dataset.id = link.id;
+
+                    if (isRearranging) {
+                        card.draggable = true;
+                        card.addEventListener('dragstart', (e) => handleDragStart(e, link.id));
+                        card.addEventListener('dragover', handleDragOver);
+                        card.addEventListener('dragleave', handleDragLeave);
+                        card.addEventListener('drop', (e) => handleDrop(e, link.id));
+                        card.addEventListener('dragend', handleDragEnd);
+                    }
+                    
+                    // Determine icon based on URL type
+                    const isLocal = link.url.startsWith('.') || link.url.startsWith('file://');
+                    const iconName = isLocal ? 'hard-drive' : 'globe';
+                    
+                    // Make the entire card clickable and pass it to openSite function (ONLY if not rearranging)
+                    if (!isRearranging) {
+                        card.setAttribute('onclick', `openSite('${link.url.replace(/'/g, "\\'")}', ${isLocal})`);
+                    }
+                    
+                    // Determine what icon to show
+                    let iconHTML = '';
+                    if (link.imageUrl) {
+                        // 1. Custom uploaded icon
+                        iconHTML = `<img src="${link.imageUrl}" alt="Icon" class="w-full h-full object-cover rounded-xl">`;
+                    } else if (!isLocal) {
+                        // 2. Web URL - fetch favicon automatically using Google's service
+                        try {
+                            // Extract domain (e.g., "github.com" from "https://github.com/user/repo")
+                            const domain = new URL(link.url).hostname;
+                            const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+                            iconHTML = `<img src="${faviconUrl}" alt="${domain}" class="w-8 h-8 object-contain rounded-md">`;
+                        } catch(e) {
+                            // Fallback if URL is invalidly formatted
+                            iconHTML = `<i data-lucide="${iconName}"></i>`;
+                        }
+                    } else {
+                        // 3. Local file or fallback
+                        iconHTML = `<i data-lucide="${iconName}"></i>`;
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-4 ${isRearranging ? 'pointer-events-none' : ''}">
+                            <div class="w-12 h-12 flex items-center justify-center bg-dark-800 rounded-xl border border-white/5 text-gray-300 group-hover:text-accent-500 group-hover:border-accent-500/30 transition-colors overflow-hidden ${isRearranging ? '' : 'pointer-events-auto'}">
+                                ${iconHTML}
+                            </div>
+                            <button onclick="deleteLink(event, '${link.id}')" class="text-gray-600 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-2 bg-dark-900 rounded-lg relative z-10 pointer-events-auto" title="Remove site">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold text-white mb-1 truncate ${isRearranging ? 'pointer-events-none' : ''}" title="${link.name}">${escapeHTML(link.name)}</h3>
+                        <p class="text-sm text-gray-500 mb-6 truncate ${isRearranging ? 'pointer-events-none' : ''}" title="${link.url}">${escapeHTML(link.url)}</p>
+                        
+                        <div class="mt-auto pt-4 border-t border-white/5 ${isRearranging ? 'pointer-events-none' : ''}">
+                            <div class="flex items-center justify-between w-full text-sm font-medium ${isRearranging ? 'text-accent-500' : 'text-gray-300 group-hover:text-white'} transition-colors">
+                                <span>${isRearranging ? 'Drag to Reorder' : 'Open Link'}</span>
+                                <i data-lucide="${isRearranging ? 'move' : 'arrow-up-right'}" class="w-4 h-4 transform ${isRearranging ? '' : 'group-hover:translate-x-1 group-hover:-translate-y-1'} transition-transform text-accent-500"></i>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+                
+                // Re-initialize icons for newly added elements
+                lucide.createIcons();
+            }
+        }
+
+        // Toggle Rearrange Mode
+        function toggleRearrange() {
+            isRearranging = !isRearranging;
+            const btn = document.getElementById('rearrangeBtn');
+            const icon = document.getElementById('rearrangeIcon');
+            const text = document.getElementById('rearrangeText');
+
+            if (isRearranging) {
+                btn.classList.add('bg-accent-600', 'border-accent-500', 'text-white');
+                btn.classList.remove('bg-dark-800', 'border-white/10');
+                text.innerText = 'Done';
+                icon.setAttribute('data-lucide', 'check');
+            } else {
+                btn.classList.remove('bg-accent-600', 'border-accent-500', 'text-white');
+                btn.classList.add('bg-dark-800', 'border-white/10');
+                text.innerText = 'Rearrange';
+                icon.setAttribute('data-lucide', 'move');
+            }
+            
+            lucide.createIcons();
+            renderGrid();
+        }
+
+        // Drag and Drop Handlers
+        function handleDragStart(e, id) {
+            draggedId = id;
+            e.dataTransfer.effectAllowed = 'move';
+            // Delay adding transparency so the dragged 'ghost' image attached to the cursor looks normal
+            setTimeout(() => {
+                e.target.classList.add('opacity-40', 'border-dashed', 'border-accent-500');
+            }, 0);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault(); // Necessary to allow dropping
+            const targetCard = e.target.closest('.glass-card');
+            if(targetCard && targetCard.dataset.id !== draggedId) {
+                targetCard.classList.add('scale-[1.02]', 'border-accent-500');
+            }
+        }
+
+        function handleDragLeave(e) {
+             const targetCard = e.target.closest('.glass-card');
+             if(targetCard && targetCard.dataset.id !== draggedId) {
+                 targetCard.classList.remove('scale-[1.02]', 'border-accent-500');
+             }
+        }
+
+        function handleDrop(e, targetId) {
+            e.preventDefault();
+            const targetCard = e.target.closest('.glass-card');
+            if(targetCard) {
+                 targetCard.classList.remove('scale-[1.02]', 'border-accent-500');
+            }
+
+            if (draggedId && draggedId !== targetId) {
+                const draggedIndex = links.findIndex(l => l.id === draggedId);
+                const targetIndex = links.findIndex(l => l.id === targetId);
+
+                // Remove dragged item and insert at target index
+                const [draggedItem] = links.splice(draggedIndex, 1);
+                links.splice(targetIndex, 0, draggedItem);
+
+                saveLinks();
+            }
+        }
+
+        function handleDragEnd(e) {
+             draggedId = null;
+             renderGrid(); // Cleans up any leftover CSS classes and visually resets
+        }
+
+        // Handle opening the site securely
+        function openSite(url, isLocal) {
+            window.open(url, isLocal ? '_self' : '_blank');
+        }
+
+        // Delete a link
+        function deleteLink(event, id) {
+            event.stopPropagation(); // Prevents the card's onclick from firing when clicking delete
+            links = links.filter(link => link.id !== id);
+            saveLinks();
+            renderGrid();
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('addModal');
+        const modalContent = document.getElementById('modalContent');
+        const form = document.getElementById('addForm');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // Small delay for transition to trigger
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            document.getElementById('siteName').focus();
+        }
+
+        function closeModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                form.reset();
+            }, 300); // match transition duration
+        }
+
+        // Handle Form Submission
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const nameInput = document.getElementById('siteName').value.trim();
+            const urlInput = document.getElementById('siteUrl').value.trim();
+            const iconInput = document.getElementById('siteIcon').files[0];
+            
+            let imageUrl = null;
+            if (iconInput) {
+                imageUrl = await readAndCompressImage(iconInput);
+            }
+            
+            if (nameInput && urlInput) {
+                const newLink = {
+                    id: Date.now().toString(), // simple unique ID
+                    name: nameInput,
+                    url: urlInput,
+                    imageUrl: imageUrl // store the processed base64 image
+                };
+                
+                links.push(newLink);
+                saveLinks();
+                renderGrid();
+                closeModal();
+            }
+        }
+
+        // Compress image to save localStorage space (prevents breaking the dashboard)
+        function readAndCompressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_SIZE = 120; // Reduce dimensions to save space
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_SIZE) {
+                                height *= MAX_SIZE / width;
+                                width = MAX_SIZE;
+                            }
+                        } else {
+                            if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height;
+                                height = MAX_SIZE;
+                            }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Output as base64 string
+                        resolve(canvas.toDataURL(file.type));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Utility: Escape HTML to prevent XSS if users enter weird characters
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag])
+            );
+        }
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', loadLinks);
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+    </script>
+
+    <!-- ========================================== -->
+    <!-- COPY-PASTE CURSOR EFFECT START -->
+    <!-- You can copy this entire block into any HTML file -->
+    <!-- ========================================== -->
+    <style>
+        /* Hide default cursor */
+        *, *::before, *::after {
+            cursor: none !important;
+        }
+
+        .custom-cursor-dot,
+        .custom-cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 999999;
+            pointer-events: none;
+        }
+
+        .custom-cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #ffffff; /* White color */
+            transition: transform 0.15s ease-out;
+        }
+
+        .custom-cursor-outline {
+            width: 32px;
+            height: 32px;
+            border: 2px solid rgba(255, 255, 255, 0.5); /* White transparent */
+            transition: width 0.2s ease-out, height 0.2s ease-out, background-color 0.2s ease-out;
+        }
+
+        /* Hover effect state */
+        .custom-cursor-outline.cursor-hover {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+
+    <div class="custom-cursor-dot" id="cursor-dot"></div>
+    <div class="custom-cursor-outline" id="cursor-outline"></div>
+
+    <script>
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let outlineX = mouseX;
+        let outlineY = mouseY;
+
+        // Track mouse position
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Dot follows instantly
+            cursorDot.style.left = `${mouseX}px`;
+            cursorDot.style.top = `${mouseY}px`;
+        });
+
+        // Smooth follow animation for outline
+        function animateCursor() {
+            let distX = mouseX - outlineX;
+            let distY = mouseY - outlineY;
+            
+            outlineX += distX * 0.15; // Speed of the trailing effect (0.1 to 1)
+            outlineY += distY * 0.15;
+            
+            cursorOutline.style.left = `${outlineX}px`;
+            cursorOutline.style.top = `${outlineY}px`;
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Event delegation for hover states (works with dynamically added elements)
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.closest('a, button, input, [onclick], i')) {
+                cursorOutline.classList.add('cursor-hover');
+                cursorDot.style.transform = 'translate(-50%, -50%) scale(0.5)';
+            }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            if (e.target.closest('a, button, input, [onclick], i')) {
+                cursorOutline.classList.remove('cursor-hover');
+                cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+            }
+        });
+    </script>
+    <!-- ========================================== -->
+    <!-- COPY-PASTE CURSOR EFFECT END -->
+    <!-- ========================================== -->
+
+</body>
+</html>
