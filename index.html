@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launcher</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* OLED Black Background */
+        body {
+            background-color: #000000;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Top Left Text Styling */
+        .brand {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            color: #ffffff;
+            font-size: 1.2rem;
+            letter-spacing: 0.4rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        /* Optional: Subtle glow to the animation container */
+        .animation-container {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+    
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.11/dist/dotlottie-wc.js" type="module"></script>
+</head>
+<body>
+
+    <div class="brand">Launcher.</div>
+
+    <div class="animation-container">
+        <dotlottie-wc 
+            id="lottie-loader"
+            src="https://lottie.host/707b2fdb-5cf8-4aa3-9b32-905d4189c12c/XxqQCt2oeG.lottie" 
+            style="width: 350px; height: 350px;" 
+            autoplay 
+            loop>
+        </dotlottie-wc>
+    </div>
+
+    <script>
+        // Target file to open
+        const targetUrl = "sitecode.html"; 
+
+        // 5 second delay (5000ms)
+        setTimeout(() => {
+            // Smoothly redirect
+            window.location.href = targetUrl;
+        }, 9000); 
+    </script>
+
+</body>
+</html>
